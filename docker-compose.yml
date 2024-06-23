@@ -16,9 +16,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DOCKER_DB_ROOT_PASSWORD:-password}
     volumes:
-      - type: volume
-        source: ac-database
-        target: /var/lib/mysql
+      - ${DOCKER_VOL_SQL:-.}/mysql:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
       test: "/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\""
@@ -28,7 +26,7 @@ services:
 
   ac-db-import:
     container_name: ac-db-import
-    image: acore/ac-wotlk-db-import:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-db-import:${DOCKER_IMAGE_TAG:-master}
     networks:
       - ac-network
     build:
@@ -55,7 +53,7 @@ services:
 
   ac-worldserver:
     container_name: ac-worldserver
-    image: acore/ac-wotlk-worldserver:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-worldserver:${DOCKER_IMAGE_TAG:-master}
     build:
       context: .
       target: worldserver
@@ -77,6 +75,14 @@ services:
       AC_LOGIN_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_auth"
       AC_WORLD_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_world"
       AC_CHARACTER_DATABASE_INFO: "ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD:-password};acore_characters"
+      # conf
+      AC_RATE_XP_QUEST: "4"
+      AC_RATE_XP_QUEST_DF: "4"
+      AC_RATE_XP_EXPLORE: "10"
+      AC_RATE_XP_PET: "4"
+      AC_RATE_REPUTATION_GAIN: "10"
+      AC_MAX_PRIMARY_TRADE_SKILL: "10"
+      AC_CORPSE_DECAY_LOOTED: "0.05"
     ports:
       - ${DOCKER_WORLD_EXTERNAL_PORT:-8085}:8085
       - ${DOCKER_SOAP_EXTERNAL_PORT:-7878}:7878
@@ -96,7 +102,7 @@ services:
 
   ac-authserver:
     container_name: ac-authserver
-    image: acore/ac-wotlk-authserver:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-authserver:${DOCKER_IMAGE_TAG:-master}
     build:
       context: .
       target: authserver
@@ -129,7 +135,7 @@ services:
 
   ac-client-data-init:
     container_name: ac-client-data-init
-    image: acore/ac-wotlk-client-data:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-client-data:${DOCKER_IMAGE_TAG:-master}
     build:
       context: .
       target: client-data
@@ -145,7 +151,7 @@ services:
   # Most of the time this shouldn't be needed
   ac-tools:
     container_name: ac-tools
-    image: acore/ac-wotlk-tools:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-tools:${DOCKER_IMAGE_TAG:-master}
     build:
       context: .
       target: tools
@@ -171,7 +177,7 @@ services:
   # first-class support
   ac-dev-server:
     tty: true
-    image: acore/ac-wotlk-dev-server:${DOCKER_IMAGE_TAG:-master}
+    image: ${DOCKER_REPO}/ac-wotlk-dev-server:${DOCKER_IMAGE_TAG:-master}
     build:
       context: .
       dockerfile: ./apps/docker/Dockerfile.dev-server
