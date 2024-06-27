@@ -2,8 +2,8 @@ services:
   ac-db-import:
     container_name: ac-db-import
     image: ${DOCKER_REPO}/ac-wotlk-db-import:${DOCKER_IMAGE_TAG:-master}
-    networks:
-      - ac-network
+    # networks:
+    #   - ac-network
     build:
       context: .
       target: db-import
@@ -34,8 +34,8 @@ services:
         USER_ID: ${DOCKER_USER_ID:-1000}
         GROUP_ID: ${DOCKER_GROUP_ID:-1000}
         DOCKER_USER: ${DOCKER_USER:-acore}
-    networks:
-      - ac-network
+    # networks:
+    #   - ac-network
     stdin_open: true
     tty: true
     restart: unless-stopped
@@ -94,8 +94,8 @@ services:
         USER_ID: ${DOCKER_USER_ID:-1000}
         GROUP_ID: ${DOCKER_GROUP_ID:-1000}
         DOCKER_USER: ${DOCKER_USER:-acore}
-    networks:
-      - ac-network
+    # networks:
+    #   - ac-network
     tty: true
     restart: unless-stopped
     env_file: ${DOCKER_AC_ENV_FILE:-conf/dist/env.ac}
@@ -194,5 +194,5 @@ volumes:
   ac-ccache-dev:
 
 
-networks:
-  ac-network:
+# networks:
+#   ac-network:
